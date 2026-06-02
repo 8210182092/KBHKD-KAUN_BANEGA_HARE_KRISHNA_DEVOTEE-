@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>भगवद्गीता यथारूप क्विज़ - डैशबोर्ड</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Calibri,'Segoe UI',sans-serif}
+    body{min-height:100vh;color:#fff;background:radial-gradient(circle at 50% 0,#18215c 0,#07091e 48%,#02030d 100%);overflow-x:hidden;padding:24px}
+    body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 20% 15%,rgba(255,204,0,.16),transparent 28%),radial-gradient(circle at 80% 20%,rgba(0,210,255,.16),transparent 26%);pointer-events:none}
+    header{text-align:center;margin:0 auto 26px;position:relative;z-index:2}
+    h1{font-size:clamp(1.8rem,5vw,4.2rem);line-height:1.35;padding:.08em 0;background:linear-gradient(90deg,#fff,#ffcc33,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 34px rgba(0,210,255,.5);overflow-wrap:anywhere}
+    header p{font-size:clamp(1rem,2vw,1.35rem);color:#cbd7ff;margin-top:8px}
+    .book-wrap{max-width:1180px;margin:0 auto 34px;perspective:1800px;position:relative;z-index:2}
+    .book{display:grid;grid-template-columns:1fr 1fr;min-height:340px;border-radius:10px;filter:drop-shadow(0 28px 40px rgba(0,0,0,.55));animation:bookOpen 1.2s ease both}
+    .page{position:relative;padding:28px;border:2px solid rgba(120,70,20,.7);background:linear-gradient(90deg,#f7e6b6,#fff4cf 12%,#f4da9a 100%);color:#251607;box-shadow:inset 0 0 28px rgba(88,47,10,.2)}
+    .page.left{border-radius:12px 0 0 12px;transform-origin:right center}
+    .page.right{border-radius:0 12px 12px 0;transform-origin:left center}
+    .page.left:after,.page.right:before{content:"";position:absolute;top:0;bottom:0;width:26px;background:linear-gradient(90deg,rgba(70,30,0,.22),transparent)}
+    .page.left:after{right:0}.page.right:before{left:0;transform:scaleX(-1)}
+    .book-title{font-size:clamp(1.45rem,3vw,2.4rem);line-height:1.28;color:#5c2704;text-align:center;margin-bottom:12px}
+    .poster{width:100%;height:220px;object-fit:cover;border:4px solid #8a4c11;border-radius:8px;box-shadow:0 12px 24px rgba(50,20,0,.35)}
+    .score-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+    .score-tile{background:rgba(94,45,5,.12);border:1px solid rgba(94,45,5,.35);border-radius:8px;padding:13px;text-align:center}
+    .score-tile strong{display:block;font-size:1.55rem;color:#8a3300}.score-tile span{font-weight:700;font-size:.9rem}
+    .chapters-container{max-width:1380px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:22px;position:relative;z-index:2}
+    .chapter-card{background:linear-gradient(135deg,rgba(6,12,42,.94),rgba(12,26,77,.94));border:2px solid rgba(0,210,255,.75);border-radius:8px;padding:18px;box-shadow:0 0 20px rgba(0,210,255,.18);transition:.25s;overflow:hidden}
+    .chapter-card:hover{transform:translateY(-5px);border-color:#ffcc00;box-shadow:0 0 30px rgba(255,204,0,.32)}
+    .chapter-title{color:#ffcc33;font-size:1.15rem;font-weight:800;line-height:1.35;padding-bottom:12px;border-bottom:1px solid rgba(0,210,255,.35);margin-bottom:14px}
+    .parts-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    .part-link{position:relative;min-height:84px;text-decoration:none;color:#fff;background:rgba(0,210,255,.1);border:1px solid #00d2ff;border-radius:8px;padding:9px 5px;text-align:center;font-weight:800;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:.22s}
+    .part-link:hover{background:#ffcc00;color:#081035;border-color:#ffcc00;box-shadow:0 0 14px #ffcc00}
+    .part-link.completed{background:linear-gradient(135deg,#087236,#00bf68);border-color:#42ff9d;box-shadow:0 0 16px rgba(66,255,157,.35)}
+    .part-score{font-size:.72rem;font-weight:700;line-height:1.18;opacity:.92}
+    .reset-btn{margin:22px auto 0;display:block;padding:12px 22px;border-radius:999px;border:2px solid #ffcc00;background:#07103b;color:#ffcc00;font-weight:800;cursor:pointer}
+    .reset-btn:hover{background:#ffcc00;color:#07103b}
+    @keyframes bookOpen{0%{opacity:0;transform:rotateX(12deg) scale(.92)}100%{opacity:1;transform:rotateX(0) scale(1)}}
+    @media(max-width:760px){body{padding:14px}.book{grid-template-columns:1fr}.page{border-radius:10px!important}.poster{height:180px}.score-summary{grid-template-columns:repeat(2,1fr)}.chapters-container{grid-template-columns:1fr}.parts-grid{grid-template-columns:repeat(5,minmax(54px,1fr))}.part-link{min-height:72px;font-size:.85rem}}
+  </style>
+</head>
+<body>
+  <audio id="dashboard-theme" autoplay loop preload="auto">
+    <source src="SP_Bhajans_04_-_Hare_Krsna_Maha_Mantra.mp3" type="audio/mpeg">
+  </audio>
+
+  <header>
+    <h1>Śrīmad Bhagavad-gītā As It Is Quiz</h1>
+    <p>Jñāna Yajña Mahāabhiyān — 18 Chapters, 90 Parts, 10 Questions in Each Part</p>
+  </header>
+
+  <section class="book-wrap">
+    <div class="book">
+      <div class="page left">
+        <h2 class="book-title">Śrīmad Bhagavad-gītā As It Is</h2>
+        <img src="123456.avif" alt="गीता पोस्टर" class="poster" onerror="this.src='https://placehold.co/700x420?text=Bhagavad+Gita'">
+      </div>
+      <div class="page right">
+        <h2 class="book-title">Your Scoreboard</h2>
+        <div class="score-summary">
+          <div class="score-tile"><strong id="total-played">0</strong><span>Played Parts</span></div>
+          <div class="score-tile"><strong id="total-correct">0/0</strong><span>Correct Answers</span></div>
+          <div class="score-tile"><strong id="total-wrong">0</strong><span>Incorrect Answers</span></div>
+          <div class="score-tile"><strong id="total-score">0</strong><span>Total Score</span></div>
+        </div>
+        <button class="reset-btn" onclick="resetScores()">Reset Score</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="chapters-container" id="chapters-grid"></main>
+
+  <script>
+    const gitaChapters = [
+  "Observing the Armies on the Battlefield of Kurukṣetra (Chapter 1)",
+  "Contents of the Gita Summarized (Chapter 2)",
+  "Karma-yoga (Chapter 3)",
+  "Transcendental Knowledge (Chapter 4)",
+  "Karma-yoga — Action in Kṛṣṇa Consciousness (Chapter 5)",
+  "Dhyāna-yoga (Chapter 6)",
+  "Knowledge of the Absolute (Chapter 7)",
+  "Attaining the Supreme (Chapter 8)",
+  "The Most Confidential Knowledge (Chapter 9)",
+  "The Opulence of the Absolute (Chapter 10)",
+  "The Universal Form (Chapter 11)",
+  "Devotional Service (Chapter 12)",
+  "Nature, the Enjoyer and Consciousness (Chapter 13)",
+  "The Three Modes of Material Nature (Chapter 14)",
+  "The Yoga of the Supreme Person (Chapter 15)",
+  "The Divine and Demoniac Natures (Chapter 16)",
+  "The Divisions of Faith (Chapter 17)",
+  "Conclusion — The Perfection of Renunciation (Chapter 18)"
+];
+
+    function getProgress() {
+      try {
+        return JSON.parse(localStorage.getItem("gita_quiz_progress")) || {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function partHref(ch, part) {
+      if (ch === 1 && part === 1) return "main_full.html";
+      return `gemini_code_ch${ch}_p${part}.html`;
+    }
+
+    function normalizePartData(data) {
+      if (!data) return null;
+
+      if (typeof data === "number") {
+        return { correct: data, incorrect: 0, total: 10, score: data };
+      }
+
+      const correct = Number(data.correct || 0);
+      const incorrect = Number(data.incorrect || 0);
+      const total = Number(data.total || 10);
+      const score = Number(data.score !== undefined ? data.score : Math.max(0, correct - incorrect));
+
+      return { correct, incorrect, total, score };
+    }
+
+    function renderDashboard() {
+      const progress = getProgress();
+      const container = document.getElementById("chapters-grid");
+      container.innerHTML = "";
+
+      let totalPlayed = 0;
+      let totalCorrect = 0;
+      let totalWrong = 0;
+      let totalScore = 0;
+      let totalQuestions = 0;
+
+      gitaChapters.forEach((name, index) => {
+        const ch = index + 1;
+        const card = document.createElement("section");
+        card.className = "chapter-card";
+        card.innerHTML = `<div class="chapter-title">${name}</div><div class="parts-grid"></div>`;
+
+        const grid = card.querySelector(".parts-grid");
+
+        for (let part = 1; part <= 5; part++) {
+          const key = `ch_${ch}_p_${part}`;
+          const data = normalizePartData(progress[key]);
+          const link = document.createElement("a");
+
+          link.href = partHref(ch, part);
+          link.className = "part-link" + (data ? " completed" : "");
+          link.innerHTML = data
+            ? `<span>Part ${part}</span><span class="part-score">Correct ${data.correct}/${data.total}<br>Wrong ${data.incorrect}<br>Score ${data.score}</span>`
+            : `<span>Part ${part}</span><span class="part-score">Let's Start</span>`;
+
+          if (data) {
+            totalPlayed++;
+            totalCorrect += data.correct;
+            totalWrong += data.incorrect;
+            totalScore += data.score;
+            totalQuestions += data.total;
+          }
+
+          grid.appendChild(link);
+        }
+
+        container.appendChild(card);
+      });
+
+      document.getElementById("total-played").textContent = totalPlayed;
+      document.getElementById("total-correct").textContent = `${totalCorrect}/${totalQuestions}`;
+      document.getElementById("total-wrong").textContent = totalWrong;
+      document.getElementById("total-score").textContent = totalScore;
+    }
+
+    function resetScores() {
+      if (confirm("क्या आप सभी scores reset करना चाहते हैं?")) {
+        localStorage.removeItem("gita_quiz_progress");
+        localStorage.removeItem("last_played_quiz_score");
+        renderDashboard();
+      }
+    }
+
+    window.addEventListener("load", () => {
+      renderDashboard();
+
+      document.body.addEventListener("click", () => {
+        const audio = document.getElementById("dashboard-theme");
+        if (audio && audio.paused) audio.play().catch(() => {});
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
